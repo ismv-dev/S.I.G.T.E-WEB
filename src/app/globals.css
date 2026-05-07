@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme: darkmatter (tech/industrial) — adaptado con variables semánticas extra */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 221 39% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 221 39% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 221 39% 11%;
+    --primary: 22 66% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 18% 39%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 221 39% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 22 66% 55%;
+    --chart-1: 180 18% 45%;
+    --chart-2: 21 73% 61%;
+    --chart-3: 32 88% 78%;
+    --chart-4: 0 0% 53%;
+    --chart-5: 0 0% 60%;
+    --sidebar: 220 14% 96%;
+    --sidebar-foreground: 221 39% 11%;
+    --sidebar-primary: 22 66% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: 221 39% 11%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 22 66% 55%;
+    --radius: 0.75rem;
+    --font-sans: "Geist Mono", ui-monospace, monospace;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+
+  .dark {
+    --background: 270 4% 7%;
+    --foreground: 0 0% 76%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 76%;
+    --popover: 270 4% 7%;
+    --popover-foreground: 0 0% 76%;
+    --primary: 22 74% 62%;
+    --primary-foreground: 270 4% 7%;
+    --secondary: 180 18% 45%;
+    --secondary-foreground: 270 4% 7%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 53%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 76%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 60% 52%;
+    --success-foreground: 270 4% 7%;
+    --warning: 38 92% 58%;
+    --warning-foreground: 270 4% 7%;
+    --border: 0 0% 13%;
+    --input: 0 0% 13%;
+    --ring: 22 74% 62%;
+    --chart-1: 180 18% 45%;
+    --chart-2: 21 73% 61%;
+    --chart-3: 32 88% 78%;
+    --chart-4: 0 0% 53%;
+    --chart-5: 0 0% 60%;
+    --sidebar: 0 0% 7%;
+    --sidebar-foreground: 0 0% 76%;
+    --sidebar-primary: 22 74% 62%;
+    --sidebar-primary-foreground: 270 4% 7%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 76%;
+    --sidebar-border: 0 0% 13%;
+    --sidebar-ring: 22 74% 62%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Detalles de UI */
+@layer utilities {
+  .grain {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      hsl(var(--muted-foreground) / 0.06) 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+  }
+}
