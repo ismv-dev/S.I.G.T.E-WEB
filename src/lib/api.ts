@@ -19,8 +19,16 @@ export function withAuth<T = Record<string, never>>(
     if (opts?.roles && !opts.roles.includes(session.role)) {
       return jsonError(403, "Acceso denegado para el rol " + session.role);
     }
-    const resolvedParams = (ctx?.params ? await ctx.params : ({} as T));
-    return handler(req, { session, params: resolvedParams });
+    
+    // Evitar que el handler falle si la base de datos no está disponible
+    // pero el usuario tiene una sesión válida (especialmente en modo demo)
+    try {
+      const resolvedParams = (ctx?.params ? await ctx.params : ({} as T));
+      return await handler(req, { session, params: resolvedParams });
+    } catch (e) {
+      console.error("API Error:", e);
+      return jsonError(500, "Error interno del servidor");
+    }
   };
 }
 

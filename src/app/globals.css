@@ -97,7 +97,18 @@
   }
 }
 
-/* Detalles de UI */
+/* Detalles de UI - Refinamiento PWA */
+@layer components {
+  .glass-card {
+    @apply bg-card/50 backdrop-blur-md border-border/50 shadow-sm transition-all duration-200 hover:bg-card/80;
+  }
+  .pwa-input {
+    @apply bg-background/50 border-border focus:ring-primary/50 transition-all duration-200;
+  }
+  .pwa-button {
+    @apply rounded-full px-6 py-2 transition-all active:scale-95;
+  }
+}
 @layer utilities {
   .grain {
     background-image: radial-gradient(

@@ -44,6 +44,7 @@ model Vehicle {
   model       String?
   color       String?
   authorized  Boolean  @default(true)
+  blacklisted Boolean   @default(false)
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
