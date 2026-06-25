@@ -35,11 +35,14 @@ function LoginForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+
       if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Error inesperado en el servidor" }));
         setError(data.error ?? "Credenciales inválidas");
         return;
       }
+
+      const data = await res.json();
       const next = sp.get("next");
       if (next) router.replace(next);
       else if (data.role === "ADMIN") router.replace("/admin");
@@ -129,9 +132,9 @@ function LoginForm() {
           Credenciales demo
         </p>
         <div className="grid gap-1.5 text-xs">
-          <DemoRow role="Admin" email="admin@sigte.cl" pw="admin123" onClick={fillDemo} />
-          <DemoRow role="Guardia" email="guardia@sigte.cl" pw="guard123" onClick={fillDemo} />
-          <DemoRow role="Usuario" email="user@sigte.cl" pw="user123" onClick={fillDemo} />
+          <DemoRow role="Admin" email="admin@sigte.cl" pw="password123" onClick={fillDemo} />
+          <DemoRow role="Guardia" email="guard@sigte.cl" pw="password123" onClick={fillDemo} />
+          <DemoRow role="Usuario" email="user@sigte.cl" pw="password123" onClick={fillDemo} />
         </div>
       </CardFooter>
     </>

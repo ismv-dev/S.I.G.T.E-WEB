@@ -12,7 +12,51 @@ export const GET = withAuth(async (_req, { session }) => {
   startOfDay.setHours(0, 0, 0, 0);
   const last7 = new Date(now.getTime() - 7 * 86400_000);
 
+  // MODO DEMO: Si el usuario es demo, devolvemos datos estáticos para evitar errores de DB
+  if (session.sub.startsWith("demo-")) {
+    return NextResponse.json({
+      scope: session.role.toLowerCase(),
+      metrics: {
+        totalUsers: 120,
+        totalGuards: 15,
+        totalAdmins: 3,
+        totalVehicles: 450,
+        authorizedVehicles: 410,
+        totalBlocks: 8,
+        totalAccessLogs: 12450,
+        accessToday: 142,
+        currentInside: 85,
+        openInfractions: 12,
+        infractionsLast7: 28,
+        avgDailyAccess: 180,
+        authRate: 94,
+        peakHour: "10:00",
+      },
+      series: [
+        { date: "2026-06-13", in: 45, out: 40 },
+        { date: "2026-06-14", in: 50, out: 48 },
+        { date: "2026-06-15", in: 60, out: 55 },
+        { date: "2026-06-16", in: 40, out: 42 },
+        { date: "2026-06-17", in: 55, out: 50 },
+        { date: "2026-06-18", in: 65, out: 60 },
+        { date: "2026-06-19", in: 30, out: 25 },
+      ],
+      occupancy: [
+        { id: "1", name: "Bloque A", capacity: 100, occupied: 45, percentage: 45 },
+        { id: "2", name: "Bloque B", capacity: 100, occupied: 30, percentage: 30 },
+        { id: "3", name: "Bloque C", capacity: 50, occupied: 10, percentage: 20 },
+      ],
+      topVehicles: [
+        { plate: "ABCD-12", owner: "Juan Pérez", count: 12 },
+        { plate: "EFGH-34", owner: "María López", count: 10 },
+        { plate: "IJKL-56", owner: "Carlos Ruiz", count: 8 },
+      ],
+      methodDist: { PLATE: 40, QR: 40, CARD: 10, MANUAL: 10 },
+    });
+  }
+
   if (session.role === "USER") {
+// ...existing code...
     const [vehicles, accessToday, openInfractions, unreadNotifs] =
       await Promise.all([
         prisma.vehicle.count({ where: { ownerId: session.sub } }),

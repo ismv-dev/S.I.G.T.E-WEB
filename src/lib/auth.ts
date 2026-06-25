@@ -11,6 +11,7 @@ const SECRET = new TextEncoder().encode(
 const ISSUER = process.env.JWT_ISSUER ?? "sigte.local";
 const AUDIENCE = process.env.JWT_AUDIENCE ?? "sigte.app";
 const COOKIE_NAME = "sigte_session";
+const REFRESH_COOKIE_NAME = "sigte_refresh";
 
 export type SessionPayload = {
   sub: string;
@@ -33,7 +34,17 @@ export async function signToken(payload: SessionPayload): Promise<string> {
     .setIssuedAt()
     .setIssuer(ISSUER)
     .setAudience(AUDIENCE)
-    .setExpirationTime("7d")
+    .setExpirationTime("1h") // Access token reduced to 1 hour
+    .sign(SECRET);
+}
+
+export async function signRefreshToken(payload: SessionPayload): Promise<string> {
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setIssuer(ISSUER)
+    .setAudience(AUDIENCE)
+    .setExpirationTime("7d") // Refresh token lasts 7 days
     .sign(SECRET);
 }
 
@@ -65,7 +76,22 @@ export async function setSessionCookie(token: string) {
     sameSite: "lax",
     secure: isSecure,
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60, // 1 hour
+  });
+}
+
+export async function setRefreshCookie(token: string) {
+  const jar = await cookies();
+  const isProduction = process.env.NODE_ENV === "production";
+  const isDevTunnel =
+    !!process.env.DEVTUNNEL_URL || process.env.HOST?.includes("devtunnels");
+  const isSecure = isProduction || isDevTunnel;
+  jar.set(REFRESH_COOKIE_NAME, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: isSecure,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 }
 
@@ -83,6 +109,7 @@ export async function clearSessionCookie() {
     maxAge: 0,
   });
   jar.delete(COOKIE_NAME);
+  jar.delete(REFRESH_COOKIE_NAME);
 }
 
 export async function getSession(): Promise<SessionPayload | null> {

@@ -80,6 +80,19 @@ export const POST = withAuth(
     if (!vehicle) return jsonError(404, "Vehículo no encontrado");
     if (session.role === "USER") return jsonError(403, "Solo un guardia puede registrar accesos");
 
+    // VALIDACIÓN DE SEGURIDAD: Verificar si el vehículo está en la lista negra
+    if (vehicle.blacklisted) {
+      return jsonError(403, "Acceso denegado: Vehículo en lista negra");
+    }
+
+    // VALIDACIÓN DE LÓGICA: Evitar entradas duplicadas o salidas sin entrada
+    if (body.direction === "IN" && vehicle.currentBlockId) {
+      return jsonError(400, "El vehículo ya se encuentra dentro del campus");
+    }
+    if (body.direction === "OUT" && !vehicle.currentBlockId) {
+      return jsonError(400, "El vehículo no tiene un registro de entrada activo");
+    }
+
     // Resolver bloque para IN: si no se especificó, usar el bloque default
     let blockToAssign: string | null | undefined = body.blockId;
     if (body.direction === "IN" && !blockToAssign) {

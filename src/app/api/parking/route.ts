@@ -54,14 +54,20 @@ export const POST = withAuth(
     const parsed = await parseJson(req, createSchema);
     if (!parsed.ok) return parsed.response;
 
-    // Si se crea como default, desmarcar cualquier otro
+    // Si se crea como default, desmarcar cualquier otro usando una transacción
     if (parsed.data.isDefault) {
-      await prisma.parkingBlock.updateMany({
-        where: { isDefault: true },
-        data: { isDefault: false },
-      });
+      await prisma.$transaction([
+        prisma.parkingBlock.updateMany({
+          where: { isDefault: true },
+          data: { isDefault: false },
+        }),
+        prisma.parkingBlock.create({ data: parsed.data }),
+      ]);
     }
-    const block = await prisma.parkingBlock.create({ data: parsed.data });
+    const block = parsed.data.isDefault 
+      ? await prisma.parkingBlock.findFirst({ where: { name: parsed.data.name } }) // Simplificación para obtener el objeto creado en la transacción
+      : await prisma.parkingBlock.create({ data: parsed.data });
+
     return NextResponse.json({ block }, { status: 201 });
   },
   { roles: ["ADMIN"] }
